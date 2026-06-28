@@ -1,55 +1,50 @@
- //Linked List
-//num-components
-//Time Complexity: O(n*m) where n is the number of nodes in the linked list and m is the size of the nums array. In the worst case, we may have to check each node against all elements in nums.
-//Space Complexity: O(1) since we are using only a constant amount of extra space to store the count of connected components and the connected flag. We are not using any additional data structures that grow with the input size.
-//Approach: We can traverse the linked list and for each node, we check if its value is present in the nums array using a helper function search. If the value is found, we continue traversing the linked list until we reach a node whose value is not present in nums. We keep track of whether we are currently in a connected component using a flag connected. If we reach a node whose value is not present in nums and we were previously in a connected component (connected is 1), we increment the count of connected components and reset the connected flag to 0. We continue this process until we reach the end of the linked list. Finally, we return the count of connected components found in the linked list.   
-#include <stdbool.h>
-#include <stdio.h>
-struct ListNode {   
-        int val;
-        struct ListNode *next;
-    };
- 
- bool search(int k,int* nums,int numsSize)
-  { 
-    for(int i=0;i<numsSize;i++) 
-  { 
-        if(nums[i]==k) 
-        { 
-        return true; 
-        } 
-  } 
-  return false; 
-  }
+/*
+ * @lc app=leetcode id=817 lang=c
+ *
+ * [817] Linked List Components
+ */
+
+// @lc code=start
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+ */
+//Linked List
+//linked-list-components    
+//Time Complexity: O(n + m) where n is the number of nodes in the linked list and m is the size of the nums array. We traverse the linked list once and check each node's value against the nums array using a frequency array, leading to O(n + m) time complexity.
+//Space Complexity: O(1) since we are using a fixed-size frequency array of size 10001 to store the presence of values in nums. This does not grow with the input size, so the space complexity is constant.
+//Approach: We can use a frequency array to store the presence of values in the nums array. We initialize a frequency array of size 10001 (to accommodate the maximum possible value of node values) and set the indices corresponding to the values in nums to 1. We then traverse the linked list and for each node, we check if its value is present in the frequency array. If it is present, we increment the count of connected components and continue traversing the linked list until we reach a node whose value is not present in the frequency array.
+#include<stdio.h>
+#include<stdbool.h>
+struct ListNode {
+     int val;
+     struct ListNode *next;
+ };
 int numComponents(struct ListNode* head, int* nums, int numsSize) {
-    if(head==NULL){
-        return -1;
+    int present[10001]={0},count=0;
+    for(int i=0;i<numsSize;i++)
+    {
+        present[nums[i]]=1;
     }
-    
-    int count=0,connected=0;
     struct ListNode *temp=head;
     while(temp!=NULL)
     {
-        while(search(temp->val,nums,numsSize))
-        {
-            temp=temp->next;
-            if(temp==NULL)
-            {
-                count ++;
-                return count;
-            }
-            if(connected==0)
-            {
-                connected=1;
-            }
-        }
-        if(connected==1)
+        if(present[temp->val]==1)
         {
             count++;
-            connected=0;
+            while(temp!=NULL&&present[temp->val]==1)
+            {
+                temp=temp->next;
+            }
         }
-        temp=temp->next;
-
+        else{
+            temp=temp->next;
+        }
     }
     return count;
 }
+// @lc code=end
+
